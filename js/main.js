@@ -1,7 +1,7 @@
 var numSquares = 6;
-var colors = randomColor(numSquares);
+var colors = [];
+var pickedColor;
 var squares = document.querySelectorAll(".square");
-var pickedColor = pickColor();
 var colorDisplay = document.getElementById("colorDisplay");
 var messageDisplay = document.querySelector("#message");
 var h1 = document.querySelector("h1");
@@ -11,23 +11,54 @@ var hardBtn = document.querySelector("#hardBtn");
 var modeButtons = document.querySelectorAll(".mode");
 
 
-// Game Mode Buttons + Reset Function
 
-for (var i = 0; i < modeButtons.length; i++){
-	modeButtons[i].addEventListener("click", function(){
+init();
+
+
+resetButton.addEventListener("click", function(){
+	reset();
+})
+
+
+// Functions
+
+function init(){
+	// Mode buttons event listeners
+	setUpModeButtons();
+	setUpSquares();
+	reset();
+}
+
+function setUpModeButtons(){
+	for (var i = 0; i < modeButtons.length; i++){
+		modeButtons[i].addEventListener("click", function(){
 		modeButtons[0].classList.remove("selected");
 		modeButtons[1].classList.remove("selected");
 		this.classList.add("selected");
-
-		if(this.textContent === "Easy"){
-		numSquares = 3;
-	} else {
-		numSquares = 6;
-	}
-	reset();
+		this.textContent === "Easy" ? numSquares = 3 : numSquares = 6;
+		reset();
 	});
 }
+}
 
+function setUpSquares(){
+	for (var i = 0; i < squares.length; i++){
+		//Adding Event
+		squares[i].addEventListener("click", function(){
+			var clickedColor = this.style.backgroundColor;
+			//Check to see if chosen color is correct
+			if (clickedColor === pickedColor){
+				changeColors(clickedColor);
+				h1.style.backgroundColor = clickedColor;
+				resetButton.textContent = "Play Again?";
+				messageDisplay.textContent = "Correct!";
+			} else {
+				this.style.backgroundColor = "#232323";
+				messageDisplay.textContent = "Try Again";
+			}
+		})
+	}
+}
 
 function reset(){
 	colors = randomColor(numSquares);
@@ -41,12 +72,37 @@ function reset(){
 			squares[i].style.backgroundColor = colors[i];
 		} else {
 			squares[i].style.display = "none";
-		}
-
-		
+		}	
 	}
 	h1.style.backgroundColor = "steelblue";
 }
+
+function changeColors(color){
+	for (var i = 0; i < squares.length; i++){
+		squares[i].style.backgroundColor = color;
+	}
+}
+
+function pickColor(){
+	var random = Math.floor(Math.random() * colors.length)
+	return colors[random];
+}
+
+function randomColor(num){
+	var arr = []
+	for (var i = 0; i < num; i++){
+		arr.push(generateRandomColors());
+	}
+	return arr;
+}
+
+function generateRandomColors(){
+	var r = Math.floor(Math.random() * 256);
+	var g = Math.floor(Math.random() * 256);
+	var b = Math.floor(Math.random() * 256);
+	return "rgb(" + r + ", " + g + ", " + b + ")";
+}
+
 
 // Long Form Button Code Below
 
@@ -83,55 +139,3 @@ function reset(){
 // 		squares[i].style.display = "block";
 // 	}
 // })
-
-// Generate new array, pick a winning color,
-
-resetButton.addEventListener("click", function(){
-	reset();
-})
-
-colorDisplay.textContent = pickedColor;
-
-for (var i = 0; i < squares.length; i++){
-	squares[i].style.backgroundColor = colors[i];
-	//Adding Event
-	squares[i].addEventListener("click", function(){
-		var clickedColor = this.style.backgroundColor;
-		//Check to see if chosen color is correct
-		if (clickedColor === pickedColor){
-			changeColors(clickedColor);
-			h1.style.backgroundColor = clickedColor;
-			resetButton.textContent = "Play Again?";
-			messageDisplay.textContent = "Correct!";
-		} else {
-			this.style.backgroundColor = "#232323";
-			messageDisplay.textContent = "Try Again";
-		}
-	})
-}
-
-function changeColors(color){
-	for (var i = 0; i < squares.length; i++){
-		squares[i].style.backgroundColor = color;
-	}
-}
-
-function pickColor(){
-	var random = Math.floor(Math.random() * colors.length)
-	return colors[random];
-}
-
-function randomColor(num){
-	var arr = []
-	for (var i = 0; i < num; i++){
-		arr.push(generateRandomColors());
-	}
-	return arr;
-}
-
-function generateRandomColors(){
-	var r = Math.floor(Math.random() * 256);
-	var g = Math.floor(Math.random() * 256);
-	var b = Math.floor(Math.random() * 256);
-	return "rgb(" + r + ", " + g + ", " + b + ")";
-}
